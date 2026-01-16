@@ -2,7 +2,7 @@
 
 # ME/CFS Database Manager
 
-A web-based database management application for ME/CFS (Myalgic Encephalomyelitis/Chronic Fatigue Syndrome) patient data. This tool manages clinical and assay data storage in MongoDB and enables export of data in formats compatible with RTI's mapMECFS system.
+A web-based database management application for ME/CFS (Myalgic Encephalomyelitis/Chronic Fatigue Syndrome) patient data. This tool manages clinical and assay data storage in MongoDB and enables export of data in formats compatible with RTI's mapMECFS system. 
 
 ## Live App
 
