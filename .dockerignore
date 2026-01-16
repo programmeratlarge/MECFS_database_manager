@@ -1,0 +1,55 @@
+# Virtual environments
+.venv/
+.venv_vengeance/
+venv/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+
+# Local data files (large)
+*.tar.gz
+*.xlsx
+*.xls
+*.tsv
+*.csv
+!tests/fixtures/*.xlsx
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Docker
+docker/
+!docker/Dockerfile
+!docker/docker-compose.yml
+
+# Documentation
+*.md
+!README.md
