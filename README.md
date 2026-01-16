@@ -4,6 +4,14 @@
 
 A web-based database management application for ME/CFS (Myalgic Encephalomyelitis/Chronic Fatigue Syndrome) patient data. This tool manages clinical and assay data storage in MongoDB and enables export of data in formats compatible with RTI's mapMECFS system.
 
+## Live App
+
+You can run the ME/CFS database manager here:
+
+👉 **[http://cbsugenomics2.biohpc.cornell.edu:7861/](http://cbsugenomics2.biohpc.cornell.edu:7861/)**
+
+---
+
 ## Features
 
 - **Data Import**
@@ -24,6 +32,8 @@ A web-based database management application for ME/CFS (Myalgic Encephalomyeliti
   - Modern Gradio-based UI accessible via browser
   - User authentication
   - Drag-and-drop file uploads
+
+---
 
 ## Usage Guide
 
@@ -77,6 +87,8 @@ A web-based database management application for ME/CFS (Myalgic Encephalomyeliti
 - **Clinical Data**: Browse all clinical records in a table format
 - **Biospecimen Data**: Search and filter biospecimen records
 
+---
+
 ## Prerequisites
 
 ### For Local Development
@@ -87,6 +99,8 @@ A web-based database management application for ME/CFS (Myalgic Encephalomyeliti
 ### For Docker Deployment
 - Docker
 - Docker Compose (optional, for simplified deployment)
+
+---
 
 ## Quick Start (Local Development)
 
@@ -115,6 +129,8 @@ uv run python -m src.mecfs_ui.app
 
 The application will be available at: **http://localhost:7861**
 
+---
+
 ## Docker Deployment
 
 ### Option A: Using Docker Compose (Recommended)
@@ -124,7 +140,7 @@ cd docker
 docker-compose up -d --build
 ```
 
-This starts both MongoDB and the application. Access at: **http://your-server:7861**
+This starts both MongoDB and the application. Access at: **[http://cbsugenomics2.biohpc.cornell.edu:7861/](http://cbsugenomics2.biohpc.cornell.edu:7861/)**
 
 **Useful commands:**
 ```bash
@@ -260,6 +276,8 @@ docker1 rm mecfs-app mecfs-mongodb
 # Restart by repeating steps 3-6
 ```
 
+---
+
 ## Configuration
 
 ### Environment Variables
@@ -273,6 +291,8 @@ docker1 rm mecfs-app mecfs-mongodb
 ### Database
 
 The application uses MongoDB with the database name `mecfs_db_consolidated_assays` by default. This can be configured in `set_up_globals.py`.
+
+---
 
 ## Project Structure
 
@@ -300,6 +320,8 @@ MECFS/
 └── pyproject.toml              # Python dependencies
 ```
 
+---
+
 ## Data Persistence
 
 - **Docker Compose**: Data persists in Docker volumes (`mongodb_data`, `mongodb_config`)
@@ -311,6 +333,8 @@ To backup MongoDB data:
 docker exec mecfs-mongodb mongodump --out /data/backup
 docker cp mecfs-mongodb:/data/backup ./mongodb_backup
 ```
+
+---
 
 ## Troubleshooting
 
@@ -332,6 +356,8 @@ docker cp mecfs-mongodb:/data/backup ./mongodb_backup
 - Use local directory mounts instead of named volumes
 - Contact your HPC support for specific Docker restrictions
 
+---
+
 ## Development
 
 ### Running Tests
@@ -346,12 +372,16 @@ uv add <package>      # Add dependency
 uv run <command>      # Run commands in virtual environment
 ```
 
-## License
-
-[Add your license information here]
-
 ## Contact
 
 Genomics Innovation Hub, Cornell University
 
 For BioHPC support: support@biohpc.cornell.edu
+
+---
+
+## Update History
+
+| Version | Date       | Description                                                       |
+|--------:|------------|-------------------------------------------------------------------|
+| v1.0    | 2026-01-16 | Initial commit.                                                   |
