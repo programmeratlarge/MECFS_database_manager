@@ -18,6 +18,49 @@ def create_export_tabs(current_user: gr.State):
     """Create export functionality tabs."""
 
     with gr.Tabs():
+        # Instructions Tab
+        with gr.TabItem("Instructions"):
+            gr.Markdown("### How to Export Data for mapMECFS")
+            gr.Markdown(f"""
+**Overview**
+
+This export tool generates TSV files compatible with the mapMECFS import format. There are two main export options:
+
+---
+
+**1. Binned Summary Export**
+
+Use this to export demographic data with binned values for age, BMI, and other fields.
+
+- Select an export format from the dropdown
+- Click "Generate Export" to create the file
+- Preview the data and download the TSV file
+
+---
+
+**2. Export for mapMECFS**
+
+Use this to convert assay data into the mapMECFS import format. This generates two files:
+- **Phenotype TSV**: Contains sample phenotype information
+- **Assay Data TSV**: Contains the assay measurements
+
+**Steps:**
+1. Prepare an MECFS Data Upload File (v{set_up_globals.MECFS_data_upload_file_version}) Excel workbook with:
+   - A **Metadata** sheet containing assay information (assay name, type, biospecimen type, etc.)
+   - A **Data Table** sheet containing the assay data with ENID and timepoint columns
+2. Upload the Excel file
+3. Review the parsed metadata to confirm it's correct
+4. Click "Generate mapMECFS Export"
+5. Download both the Phenotype and Assay Data TSV files
+
+---
+
+**Notes**
+- The Data Table sheet may optionally have a "Required:" row at the top - this will be automatically skipped
+- ENID values in the Data Table must match study IDs in the database
+- Timepoint values should be one of: D1-PRE, D1-POST, D2-PRE, D2-POST, or similar formats
+""")
+
         # Binned Summary Export
         with gr.TabItem("Binned Summary"):
             gr.Markdown("### Export Binned Demographic Summary")
@@ -132,13 +175,13 @@ def create_export_tabs(current_user: gr.State):
                 outputs=[binned_status, binned_preview, binned_download]
             )
 
-        # RTI Export
-        with gr.TabItem("Export for RTI"):
+        # mapMECFS Export
+        with gr.TabItem("Export for mapMECFS"):
             gr.Markdown("### Export Data for mapMECFS Import")
-            gr.Markdown("Upload an assay configuration file to generate RTI-compatible export files.")
+            gr.Markdown(f"Upload an MECFS Data Upload File (v{set_up_globals.MECFS_data_upload_file_version}) to generate mapMECFS-compatible export files.")
 
             rti_config_file = gr.File(
-                label="Upload Assay Configuration Excel File",
+                label=f"Upload MECFS Data Upload File (v{set_up_globals.MECFS_data_upload_file_version})",
                 file_types=[".xlsx", ".xls"],
                 type="filepath"
             )
@@ -146,7 +189,7 @@ def create_export_tabs(current_user: gr.State):
             with gr.Accordion("Configuration Preview", open=True):
                 rti_metadata_display = gr.Markdown(value="*Upload a file to see configuration*", visible=True)
 
-            rti_export_btn = gr.Button("Generate RTI Export", variant="primary")
+            rti_export_btn = gr.Button("Generate mapMECFS Export", variant="primary")
             rti_status = gr.HTML(value="")
 
             with gr.Row():
@@ -168,7 +211,7 @@ def create_export_tabs(current_user: gr.State):
                         return gr.update(value=f"**Error:** {error}")
 
                     # Format metadata as nice markdown
-                    md_lines = ["#### Assay Configuration\n"]
+                    md_lines = [f"#### MECFS Data Upload File (v{set_up_globals.MECFS_data_upload_file_version})\n"]
 
                     # Define display order and nice labels
                     field_labels = {
@@ -235,12 +278,34 @@ def create_export_tabs(current_user: gr.State):
                     ext = os.path.splitext(file_path)[1].lower()
                     engine = 'xlrd' if ext == '.xls' else 'openpyxl'
 
-                    dataTableDF = pd.read_excel(
+                    # First read without headers to check for "Required:" row
+                    dataTableDF_raw = pd.read_excel(
                         file_path,
                         sheet_name='Data Table',
                         engine=engine,
+                        header=None,
                         keep_default_na=False
                     )
+
+                    # Check if first row starts with "Required:"
+                    first_cell = str(dataTableDF_raw.iloc[0, 0]).strip()
+                    if first_cell.startswith('Required:'):
+                        # Skip the "Required:" row, use second row as headers
+                        dataTableDF = pd.read_excel(
+                            file_path,
+                            sheet_name='Data Table',
+                            engine=engine,
+                            skiprows=1,
+                            keep_default_na=False
+                        )
+                    else:
+                        # No "Required:" row, use first row as headers
+                        dataTableDF = pd.read_excel(
+                            file_path,
+                            sheet_name='Data Table',
+                            engine=engine,
+                            keep_default_na=False
+                        )
 
                     # Normalize column names
                     dataTableDF.columns = modify_df_column_names(dataTableDF.columns)
@@ -253,10 +318,19 @@ def create_export_tabs(current_user: gr.State):
                                'sample_identifier_type', 'annot_1', 'annot_2', 'annot_3']
                     phenotype_data = []
 
-                    enid_col = 'enid' if 'enid' in dataTableDF.columns else 'ENID'
-                    if enid_col not in dataTableDF.columns:
+                    # Find ENID column - check multiple possible names
+                    possible_enid_cols = ['enid', 'ENID', 'study_id', 'studyid', 'subject_id', 'subjectid', 'sample_id']
+                    enid_col = None
+                    for col_name in possible_enid_cols:
+                        if col_name in dataTableDF.columns:
+                            enid_col = col_name
+                            break
+
+                    if enid_col is None:
+                        available_cols = ', '.join(list(dataTableDF.columns)[:10])
                         return (
-                            "<span class='error-msg'>Could not find ENID column in data</span>",
+                            f"<span class='error-msg'>Could not find ENID column in data. "
+                            f"Available columns: {available_cols}...</span>",
                             gr.update(visible=False),
                             gr.update(visible=False)
                         )
@@ -365,7 +439,7 @@ def create_export_tabs(current_user: gr.State):
                     rtiDF_transposed.to_csv(assay_path, sep="\t", header=False)
 
                     return (
-                        f"<span class='success-msg'>Generated RTI export for {unique_assay_name}: "
+                        f"<span class='success-msg'>Generated mapMECFS export for {unique_assay_name}: "
                         f"{len(rti_phenotype_DF)} phenotype records, {len(rtiDF_transposed)} assay data columns</span>",
                         gr.update(value=phenotype_path, visible=True),
                         gr.update(value=assay_path, visible=True)
