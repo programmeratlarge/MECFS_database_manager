@@ -2,7 +2,7 @@
 
 # ME/CFS Database Manager
 
-A web-based database management application for ME/CFS (Myalgic Encephalomyelitis/Chronic Fatigue Syndrome) patient data. This tool manages clinical and assay data storage in MongoDB and enables export of data in formats compatible with RTI's mapMECFS system. 
+A web-based database management application for ME/CFS (Myalgic Encephalomyelitis/Chronic Fatigue Syndrome) patient data. This tool manages clinical and assay data storage in MongoDB and enables export of data in formats compatible with the mapMECFS system. 
 
 ## Live App
 
@@ -21,7 +21,7 @@ You can run the ME/CFS database manager here:
 
 - **Data Export**
   - Binned demographic summaries with configurable formats
-  - RTI-compatible exports (phenotype and assay data TSV files)
+  - mapMECFS-compatible exports (phenotype and assay data TSV files)
 
 - **Data Viewing**
   - Browse clinical records
@@ -73,11 +73,11 @@ You can run the ME/CFS database manager here:
 3. Click "Generate Export"
 4. Download the TSV file
 
-#### RTI Export
-1. Go to **Export Data** > **Export for RTI**
+#### mapMECFS Export
+1. Go to **Export Data** > **Export for mapMECFS**
 2. Upload an assay configuration Excel file
 3. Review the configuration preview
-4. Click "Generate RTI Export"
+4. Click "Generate mapMECFS Export"
 5. Download both:
    - Phenotype TSV file
    - Assay data TSV file
@@ -239,7 +239,7 @@ Note the IP address (e.g., `172.19.0.2`).
 **5. Build the application image**
 ```bash
 cd /workdir/<username>/path/to/MECFS
-docker1 build -t biohpc_<username>/mecfs-app -f docker/Dockerfile .
+docker1 build -t mecfs-app /workdir/<username>/path/to/MECFS/MECFS_database_manager
 ```
 
 **6. Run the application**
@@ -268,10 +268,10 @@ The application will be available at: `http://<biohpc-server>:7861`
 **Stopping and restarting containers:**
 ```bash
 # Stop containers
-docker1 stop mecfs-app mecfs-mongodb
+docker1 stop <username>__biohpc_mecfs-app
 
 # Remove containers (data persists in the mounted directory)
-docker1 rm mecfs-app mecfs-mongodb
+docker1 rm <username>__biohpc_mecfs-app
 
 # Restart by repeating steps 3-6
 ```
@@ -385,3 +385,4 @@ For BioHPC support: support@biohpc.cornell.edu
 | Version | Date       | Description                                                       |
 |--------:|------------|-------------------------------------------------------------------|
 | v1.0    | 2026-01-16 | Initial commit.                                                   |
+| v1.1    | 2026-02-04 | Bug fixes, text changes, and addition of instructions tab         |

@@ -6,6 +6,7 @@
 
 # Set up globals
 MECFSVersion = 'MECFS_V1'
+MECFS_data_upload_file_version = '0.3'
 # data_folder = '/workdir/data/'
 # data_folder = 'C:/Users/prm88/Documents/Box/genome_innovation_hub/mecfs_code/data/'
 data_folder = '../data/'
@@ -19,8 +20,6 @@ users = [('Paul Munn', 'prm88@cornell.edu'),
          ('Jen Grenier', 'jgrenier@cornell.edu'),
          ('Carl Franconi', 'carl.franconi@cornell.edu'),
          ('Ludovic Giloteaux', 'lg349@cornell.edu'),
-         ('Andrew Grimson', 'agrimson@cornell.edu'),
-         ('Maureen Hanson', 'maureen.hanson@cornell.edu'),
          ('Arnaud Didier Germain', 'ag297@cornell.edu'),
          ('Katie Glass', 'kg432@cornell.edu')
          ]
